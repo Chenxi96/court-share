@@ -1,0 +1,49 @@
+// schema.prisma
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl  = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  extensions = [postgis]
+}
+
+model Post {
+  id           String                                @id @default(cuid())
+  title        String
+  location     Unsupported("geography(Point, 4326)")
+  owner        User                                  @relation(fields: [ownerId], references: [id])
+  ownerId      String                                @unique
+  createdAt    DateTime                              @default(now()) @map(name: "created_at")
+  updatedAt    DateTime                              @updatedAt @map(name: "updated_at")
+  attendees Attendees[]
+
+  @@map(name: "posts")
+}
+
+model User {
+  id           String         @id @default(cuid())
+  name         String
+  email        String         @unique
+  createdAt    DateTime       @default(now()) @map(name: "created_at")
+  updatedAt    DateTime       @updatedAt @map(name: "updated_at")
+  posts        Post[]
+  attendees Attendees[]
+
+  @@map(name: "users")
+}
+
+model Attendees {
+  post     Post     @relation(fields: [postId], references: [id])
+  postId   String
+  user     User     @relation(fields: [userId], references: [id])
+  userId   String
+  joinedAt DateTime @default(now())
+
+  @@id([postId, userId])
+  @@map(name: "attendees")
+}
