@@ -11,14 +11,18 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@prisma/client": "^5.11.0",
     "next": "12.0.10",
+    "npm": "^10.5.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-markdown": "8.0.0"
+    "react-markdown": "8.0.0",
+    "vercel": "^33.6.2"
   },
   "devDependencies": {
     "@types/node": "17.0.14",
     "@types/react": "17.0.38",
-    "typescript": "4.5.5"
+    "prisma": "^5.11.0",
+    "typescript": "^5.4.3"
   }
 }
