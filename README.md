@@ -1,3 +1,18 @@
-# Fullstack Authentication Example with Next.js and NextAuth.js
+# Court-Share
 
-This is the starter project for the fullstack tutorial with Next.js and Prisma. You can find the final version of this project in the [`final`](https://github.com/prisma/blogr-nextjs-prisma/tree/final) branch of this repo.
+
+
+## Installation
+
+1. Clone the repository.
+2. Install dependencies with `npm install`.
+3. Install docker `https://docs.docker.com/get-docker/`
+
+## Running App locally
+1. Create a `.env`, add `POSTGRES_PRISMA_URL` with an string value of `postgresql://postgres:password@localhost:5432/court-share?schema=public`
+2. Prompt `npx prisma migrate dev` to update the prisma schema with the new url.
+3. To run application, prompt `npm run local` to run postgres in a local docker container then open up prisma studio.(Make sure Docker is running to execute this.)
+4. Please run `npm run stop-local` to stop and remove the container from docker.
+
+
+
