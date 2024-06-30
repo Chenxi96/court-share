@@ -5,7 +5,7 @@ import Layout from "../../components/Layout"
 import { PostProps } from "../../components/Post"
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const post = await prisma.post.findUnique({
+  const post = await prisma.post.findUniqueOrThrow({
     where: {
       id: String(params?.id),
     },
@@ -22,10 +22,12 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       }
     }
   });
+  
   return {
     props: post,
   };
 };
+
 const Post: React.FC<PostProps> = (props) => {
   let title = props?.title
   let name = props?.owner?.name

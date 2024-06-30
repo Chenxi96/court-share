@@ -5,11 +5,26 @@ import mockRouter from 'next-router-mock';
 import Page from '../../../pages/p/[id].tsx';
 import { getServerSideProps } from "../../../pages/p/[id].tsx"
 
+
+jest.mock("next-auth/react", () => {
+  const oneDay = 86400
+  const twoDays = 2 * oneDay
+  const mockSession = {
+    expires: new Date(Date.now() + twoDays).toISOString(),
+    user: { name: "admin" }
+  };
+  return {
+    useSession: jest.fn(() => {
+      return {data: mockSession, status: 'authenticated'}
+    }),
+  };
+});
+
 jest.mock('next/dist/client/router', () => jest.requireActual('next-router-mock'))
 mockRouter.useParser(createDynamicRouteParser([
     "/[id]"
   ]));
- 
+
 describe('Page', () => {
   const params = { id: 1 }
   const post = {
@@ -26,8 +41,7 @@ describe('Page', () => {
   }
 
   it('renders a title', async () => {
-  
-    global.prisma.post.findUnique.mockResolvedValue(post)
+    global.prisma.post.findUniqueOrThrow.mockResolvedValue(post)
     const result = await getServerSideProps(params)
     mockRouter.push("/pages/p/1")
     render(<Page {...result.props} />)
@@ -39,19 +53,19 @@ describe('Page', () => {
 
 
   it('render owner name', async() => {
-  
-    global.prisma.post.findUnique.mockResolvedValue(post)
+
+    global.prisma.post.findUniqueOrThrow.mockResolvedValue(post)
     const result = await getServerSideProps(params)
     mockRouter.push("/pages/p/1")
     render(<Page {...result.props} />)
-    
     const postName = screen.getByTestId('post-name')
     expect(postName).toBeInTheDocument()
     expect(postName).toHaveTextContent(result.props.owner.name)
   })
 
   it('renders page when props is null', async () => {
-      global.prisma.post.findUnique.mockResolvedValue(null);
+    
+      global.prisma.post.findUniqueOrThrow.mockResolvedValue(null);
       const result = await getServerSideProps(params)
       mockRouter.push("/pages/p/1")
       render(<Page {...result.props} />)
