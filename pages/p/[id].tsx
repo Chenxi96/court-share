@@ -3,40 +3,55 @@ import { GetServerSideProps } from "next"
 import prisma from '../../lib/prisma';
 import Layout from "../../components/Layout"
 import { PostProps } from "../../components/Post"
+import Error from 'next/error'
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const post = await prisma.post.findUnique({
-    where: {
-      id: String(params?.id),
-    },
-    select: {
-      id: true,
-      title: true,
-      ownerId: true,
-      owner: {
-        select: {
-          id: true,
-          name: true,
-          email: true
+interface prismaError {
+  name: string,
+  code: string,
+  clientVersion: string
+}
+
+export const getServerSideProps: GetServerSideProps = async ({ params, res}) => {
+  try {
+    const post = await prisma.post.findUniqueOrThrow({
+      where: {
+        id: String(params?.id),
+      },
+      select: {
+        id: true,
+        title: true,
+        ownerId: true,
+        owner: {
+          select: {
+            id: true,
+            name: true,
+            email: true
+          }
         }
       }
+    });
+    return {
+      props: post,
+    };
+
+  } catch(error) {
+    return {
+      props: JSON.parse(JSON.stringify(error))
     }
-  });
-  return {
-    props: post,
-  };
+  }
+ 
 };
-const Post: React.FC<PostProps> = (props) => {
+
+const Post: React.FC<PostProps & prismaError> = (props) => {
   let title = props?.title
-  let name = props?.owner?.name
-  
+  let name = props.code ? props.name : props?.owner?.name
   return (
     <Layout>
-      <div>
-        <h2 data-testid="heading-title">{title}</h2>
-        <p data-testid="post-name">{name}</p>
-      </div>
-      <style jsx>{`
+      {props?.code ? <Error statusCode={404} title="Post does not exist"/> : 
+        <div>
+          <h2 data-testid="heading-title">{title}</h2>
+          <p data-testid="post-name">{name}</p>
+          <style jsx>{`
         .page {
           background: white;
           padding: 2rem;
@@ -57,6 +72,8 @@ const Post: React.FC<PostProps> = (props) => {
           margin-left: 1rem;
         }
       `}</style>
+        </div>
+      }
     </Layout>
   )
 }

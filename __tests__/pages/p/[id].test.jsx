@@ -4,12 +4,27 @@ import { createDynamicRouteParser } from "next-router-mock/dynamic-routes";
 import mockRouter from 'next-router-mock';
 import Page from '../../../pages/p/[id].tsx';
 import { getServerSideProps } from "../../../pages/p/[id].tsx"
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+
+
+jest.mock("next-auth/react", () => {
+  const oneDay = 86400
+  const mockSession = {
+    expires: new Date(Date.now() + oneDay).toISOString(),
+    user: { name: "admin" }
+  };
+  return {
+    useSession: jest.fn(() => {
+      return {data: mockSession, status: 'authenticated'}
+    }),
+  };
+});
 
 jest.mock('next/dist/client/router', () => jest.requireActual('next-router-mock'))
 mockRouter.useParser(createDynamicRouteParser([
     "/[id]"
   ]));
- 
+
 describe('Page', () => {
   const params = { id: 1 }
   const post = {
@@ -26,8 +41,7 @@ describe('Page', () => {
   }
 
   it('renders a title', async () => {
-  
-    global.prisma.post.findUnique.mockResolvedValue(post)
+    global.prisma.post.findUniqueOrThrow.mockResolvedValue(post)
     const result = await getServerSideProps(params)
     mockRouter.push("/pages/p/1")
     render(<Page {...result.props} />)
@@ -38,20 +52,20 @@ describe('Page', () => {
   })
 
 
-  it('render owner name', async() => {
-  
-    global.prisma.post.findUnique.mockResolvedValue(post)
+  it('renders owner name', async() => {
+
+    global.prisma.post.findUniqueOrThrow.mockResolvedValue(post)
     const result = await getServerSideProps(params)
     mockRouter.push("/pages/p/1")
     render(<Page {...result.props} />)
-    
     const postName = screen.getByTestId('post-name')
     expect(postName).toBeInTheDocument()
     expect(postName).toHaveTextContent(result.props.owner.name)
   })
 
   it('renders page when props is null', async () => {
-      global.prisma.post.findUnique.mockResolvedValue(null);
+    
+      global.prisma.post.findUniqueOrThrow.mockResolvedValue(null);
       const result = await getServerSideProps(params)
       mockRouter.push("/pages/p/1")
       render(<Page {...result.props} />)
@@ -63,5 +77,29 @@ describe('Page', () => {
       expect(headingTitle).toBeInTheDocument()
       expect(postName).toBeEmptyDOMElement()
       expect(headingTitle).toBeEmptyDOMElement()
+  })
+
+  it('renders a 404 page when props is not found', async () => {
+
+    global.prisma.post.findUniqueOrThrow.mockRejectedValue(
+      new PrismaClientKnownRequestError('NotFoundError [PrismaClientKnownRequestError]: No Post found' ,{
+        clientVersion: '5.14.0',
+        code: 'P2025',
+      })
+    )
+    const result = await getServerSideProps(params)
+    mockRouter.push('/pages/p/1')
+    render(<Page {...result.props} />)
+    expect(result).toEqual({
+      props: {
+        name: 'PrismaClientKnownRequestError',
+        code: 'P2025',
+        clientVersion: '5.14.0',
+      },
+    });
+    const header1 = screen.getByText('404')
+    const header2 = screen.getByText('Post does not exist.')
+    expect(header1).toBeInTheDocument()
+    expect(header2).toBeInTheDocument()
   })
 })
