@@ -3,7 +3,6 @@
 
 
 ## Installation
-
 1. Clone the repository.
 2. Install dependencies with `npm install`.
 3. Install docker `https://docs.docker.com/get-docker/`
@@ -25,4 +24,5 @@
 Links:
     - https://authjs.dev/getting-started/authentication/oauth
     - https://authjs.dev/getting-started/migrating-to-v5
+    - https://authjs.dev/getting-started/installation
 I used auth.js to implement authentication with google provider.

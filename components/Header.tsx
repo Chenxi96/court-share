@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { signOut } from 'next-auth/react';
-import { useSession } from '../lib/useSession';
+import { useSession } from '@/lib/useSession';
 
 
 const Header: React.FC = () => {
