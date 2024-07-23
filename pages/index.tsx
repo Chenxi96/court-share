@@ -1,10 +1,13 @@
 import React from "react"
-import { GetStaticProps } from "next"
+import { GetServerSideProps } from "next"
 import prisma from '../lib/prisma'
 import Layout from "../components/Layout"
 import Post, { PostProps } from "../components/Post"
+import { auth } from '../auth'
+import { Session } from "next-auth"
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await auth(context)
   const posts = await prisma.post.findMany({
     select: {
       id: true,
@@ -20,13 +23,13 @@ export const getStaticProps: GetStaticProps = async () => {
     }
   });
   return {
-    props: { posts },
-    revalidate: 10,
+    props: { posts, session},
   };
 };
 
 type Props = {
   posts: PostProps[]
+  session: Session
 }
 
 const PostPage: React.FC<Props> = (props) => {
@@ -35,7 +38,7 @@ const PostPage: React.FC<Props> = (props) => {
       <div className="page">
         <h1>Public Posts</h1>
         <main>
-          {props.posts.map((post) => (
+          {!props?.session ? <p>Please log in</p> : props.posts.map((post) => (
             <div key={post.id} className="post">
               <Post post={post} />
             </div>
