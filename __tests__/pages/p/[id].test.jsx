@@ -2,23 +2,22 @@ import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
 import { createDynamicRouteParser } from "next-router-mock/dynamic-routes";
 import mockRouter from 'next-router-mock';
-import Page from '../../../pages/p/[id].tsx';
-import { getServerSideProps } from "../../../pages/p/[id].tsx"
+import Page from '@/pages/p/[id].tsx';
+import { getServerSideProps } from "@/pages/p/[id].tsx"
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
-
-jest.mock("next-auth/react", () => {
+jest.mock("../../../auth", () => {
   const oneDay = 86400
   const mockSession = {
     expires: new Date(Date.now() + oneDay).toISOString(),
     user: { name: "admin" }
   };
   return {
-    useSession: jest.fn(() => {
-      return {data: mockSession, status: 'authenticated'}
-    }),
-  };
-});
+    auth: jest.fn(() => {
+      return mockSession
+    })
+  }
+})
 
 jest.mock('next/dist/client/router', () => jest.requireActual('next-router-mock'))
 mockRouter.useParser(createDynamicRouteParser([
@@ -45,10 +44,10 @@ describe('Page', () => {
     const result = await getServerSideProps(params)
     mockRouter.push("/pages/p/1")
     render(<Page {...result.props} />)
-    
+
     const headingTitle= screen.getByTestId('heading-title')
     expect(headingTitle).toBeInTheDocument()
-    expect(headingTitle).toHaveTextContent(result.props.title)
+    expect(headingTitle).toHaveTextContent(result.props.post.title)
   })
 
 
@@ -60,7 +59,7 @@ describe('Page', () => {
     render(<Page {...result.props} />)
     const postName = screen.getByTestId('post-name')
     expect(postName).toBeInTheDocument()
-    expect(postName).toHaveTextContent(result.props.owner.name)
+    expect(postName).toHaveTextContent(result.props.post.owner.name)
   })
 
   it('renders page when props is null', async () => {
@@ -70,7 +69,7 @@ describe('Page', () => {
       mockRouter.push("/pages/p/1")
       render(<Page {...result.props} />)
 
-      expect(result.props).toEqual(null)
+      expect(result.props.post).toEqual(null)
       const postName = screen.getByTestId('post-name')
       const headingTitle= screen.getByTestId('heading-title')
       expect(postName).toBeInTheDocument()

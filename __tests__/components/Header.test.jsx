@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
-import Page from '../../components/Header'
+import Page from '@/components/Header'
 import { useSession } from 'next-auth/react';
 
 jest.mock('next/dist/client/router', () => jest.requireActual('next-router-mock'))
