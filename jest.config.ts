@@ -11,8 +11,8 @@ const config: Config = {
   setupFilesAfterEnv: ["<rootDir>/lib/prisma.ts"],
   testEnvironment: "jsdom",
   moduleNameMapper: {
-    'next-auth/react': '<rootDir>/mocks/auth/next-auth.ts',
-  }
+    'next-auth/react': '<rootDir>/mocks/auth/next-auth-react.ts',
+  },
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

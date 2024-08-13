@@ -1,0 +1,24 @@
+import { auth } from "@/auth"
+import { NextResponse } from "next/server"
+import { prisma } from '@/lib/createPost'
+
+
+export const POST = auth(async (req) => {
+    const data = await req.json()
+    if (req.auth) {
+        await prisma.post.createPost({
+            title: data.title,
+            latitude: data.latitude,
+            longitude: data.longitude,
+            ownerId: data.ownerId,
+            description: data.description,
+            availableSpots: data.availabeSpots,
+            name: data.name,
+            email: data.email
+        })
+        return NextResponse.json({ message: 'Created Post'}, {status: 201})
+    }
+    
+    return NextResponse.json({ message: "Not authenticated" }, { status: 401 })
+})
+
