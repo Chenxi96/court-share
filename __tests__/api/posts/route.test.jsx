@@ -4,7 +4,7 @@
 
 import { POST } from '@/app/api/posts/route'
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/createPost'
+import { prismaPost } from '@/lib/createPost'
 
 jest.mock('../../../auth', () => {
     return {
@@ -35,7 +35,7 @@ describe('checking route', () => {
                 name: 'chenxi'
             }
         }
-        prisma.post.createPost = jest.fn()
+        prismaPost.post.createPost = jest.fn()
         await POST(req)
         expect(spy).toHaveBeenCalledTimes(1);
         expect(spy).toHaveBeenCalledWith({ message: 'Created Post'}, {status: 201})

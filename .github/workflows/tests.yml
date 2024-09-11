@@ -5,6 +5,15 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgis/postgis:13-3.1-alpine
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: court-share
     steps:
       - uses: actions/checkout@v2
       - name: Test using Node.js
@@ -12,4 +21,10 @@ jobs:
         with:
           node-version: '18'
       - run: npm install
+      - name: Wait for PostgreSQL
+        run: until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done
+        env:
+          PGPASSWORD: password
       - run: npm run test:ci
+        env:
+          POSTGRES_PRISMA_URL: postgresql://postgres:password@localhost:5432/court-share?schema=public

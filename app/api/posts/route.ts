@@ -1,12 +1,12 @@
 import { auth } from "@/auth"
 import { NextResponse } from "next/server"
-import { prisma } from '@/lib/createPost'
+import { prismaPost } from '@/lib/createPost'
 
 
 export const POST = auth(async (req) => {
     const data = await req.json()
     if (req.auth) {
-        await prisma.post.createPost({
+        await prismaPost.post.createPost({
             title: data.title,
             latitude: data.latitude,
             longitude: data.longitude,

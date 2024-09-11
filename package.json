@@ -6,8 +6,9 @@
     "dev": "next",
     "build": "next build",
     "start": "next start",
-    "test": "NODE_ENV=test && jest --watch",
-    "test:ci": "jest --ci --passWithNoTests",
+    "migrate:postgres": "dotenv -e .env.test -- npx prisma migrate deploy",
+    "test": "docker compose up -d && npm run migrate:postgres && NODE_ENV=test && jest --watch",
+    "test:ci": "npx prisma migrate deploy && jest --ci --passWithNoTests",
     "local": "docker compose up -d && npx prisma studio",
     "stop-local": "docker compose down",
     "postinstall": "npx prisma generate"
@@ -18,6 +19,7 @@
   "dependencies": {
     "@auth/prisma-adapter": "^2.2.0",
     "@prisma/client": "^5.13.0",
+    "dotenv-cli": "^7.4.2",
     "next": "^14.2.3",
     "next-auth": "^5.0.0-beta.19",
     "npm": "^10.8.1",

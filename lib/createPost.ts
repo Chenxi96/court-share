@@ -9,7 +9,7 @@ type MyPointOfInterest = {
     location: MyPoint
 }
 
-export const prisma = new PrismaClient().$extends({
+export const prismaPost = new PrismaClient().$extends({
     model: {
       post: {
         async createPost(data: {
@@ -23,7 +23,7 @@ export const prisma = new PrismaClient().$extends({
             name: string
         }) {
         
-        const createPost = await prisma.post.create({
+        const createPost = await prismaPost.post.create({
             data: {
                 title: data.title,
                 description: data.description, 
@@ -51,14 +51,14 @@ export const prisma = new PrismaClient().$extends({
   
         //   // Insert the object into the database
           const point = `POINT(${poi.location.longitude} ${poi.location.latitude})`
-          await prisma.$queryRaw`
+          await prismaPost.$queryRaw`
             UPDATE "posts" 
             SET location = ST_GeomFromText(${point}, 4326)
             WHERE id = ${createPost.id};
           `
 
-          // Return the object
-          return poi
+          // Return the created post object
+          return createPost
         },
       },
     },
