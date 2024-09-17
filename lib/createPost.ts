@@ -21,17 +21,18 @@ export const prismaPost = new PrismaClient().$extends({
             availableSpots: number
             email: string
             name: string
+            eventTime: string
         }) {
-        
         const createPost = await prismaPost.post.create({
             data: {
                 title: data.title,
                 description: data.description, 
                 availableSpots: data.availableSpots,
+                eventTime: data.eventTime,
                 owner: {
                     connectOrCreate: {
                         where: {
-                            id: data.ownerId
+                            email: data.email
                         },
                         create: {
                             name: data.name,
@@ -48,7 +49,6 @@ export const prismaPost = new PrismaClient().$extends({
               longitude: data.longitude,
             }
           }
-  
         //   // Insert the object into the database
           const point = `POINT(${poi.location.longitude} ${poi.location.latitude})`
           await prismaPost.$queryRaw`

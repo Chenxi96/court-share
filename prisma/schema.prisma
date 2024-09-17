@@ -16,9 +16,10 @@ model Post {
   title        String
   location     Unsupported("geography(Point, 4326)")?
   owner        User                                  @relation(fields: [ownerId], references: [id])
-  ownerId      String                                @unique
+  ownerId      String                                
   description  String
   availableSpots Int
+  eventTime    DateTime
   createdAt    DateTime                              @default(now()) @map(name: "created_at")
   updatedAt    DateTime                              @updatedAt @map(name: "updated_at")
   attendees Attendees[]

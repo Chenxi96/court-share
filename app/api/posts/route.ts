@@ -12,9 +12,10 @@ export const POST = auth(async (req) => {
             longitude: data.longitude,
             ownerId: data.ownerId,
             description: data.description,
-            availableSpots: data.availabeSpots,
+            availableSpots: data.availableSpots,
             name: data.name,
-            email: data.email
+            email: data.email,
+            eventTime: data.eventTime
         })
         return NextResponse.json({ message: 'Created Post'}, {status: 201})
     }
