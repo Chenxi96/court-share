@@ -38,7 +38,8 @@ describe('testing database integration', () => {
             description: 'example example example',
             availableSpots: 5,
             name: 'chenxi',
-            email: 'example1@example.com'
+            email: 'example1@example.com',
+            eventTime: "2024-09-22T15:30:00Z"
         })
 
         const newPost = await prisma.post.findUnique({

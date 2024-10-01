@@ -26,6 +26,7 @@
     "npm-check-updates": "^16.14.18",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-google-autocomplete": "^2.7.3",
     "vercel": "^34.1.2"
   },
   "devDependencies": {
