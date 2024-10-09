@@ -4,7 +4,7 @@ import prisma from '@/lib/prisma';
 import Layout from "@/components/Layout"
 import { PostProps } from "@/components/Post"
 import Error from 'next/error'
-import { auth } from '@/auth'
+import { auth } from '@/lib/authSession'
 import { Session } from 'next-auth'
 
 interface PropObj {
@@ -56,10 +56,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const Post: React.FC<PropObj> = (props) => {
     let title = props?.post?.title
     let name = props?.post?.owner?.name
-
     if(props?.code) {
       return <Error statusCode={404} title="Post does not exist"/>
-    } else if(!props?.session?.user) {
+    } else if(!props?.session?.user || process.env.NEXT_PUBLIC_USE_TEST === 'false') {
       return (
         <Layout>
           <p>need to login</p>

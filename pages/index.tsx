@@ -3,11 +3,33 @@ import { GetServerSideProps } from "next"
 import prisma from '@/lib/prisma'
 import Layout from "@/components/Layout"
 import Post, { PostProps } from "@/components/Post"
-import { auth } from '@/auth'
+import { auth } from '@/lib/authSession'
 import { Session } from "next-auth"
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await auth(context)
+
+  if(process.env.NEXT_PUBLIC_USE_TEST === 'true') {
+      const checkAndCreateUser = async () => {
+        const user = await prisma.user.findUnique({
+            where: {
+                email: 'testing@example.com'
+            }
+        });
+
+        if(!user) {
+            return await prisma.user.create({
+                data: {
+                    name: 'admin',
+                    email: 'testing@example.com',
+                    image: null
+                }
+            })
+        }
+      }
+    checkAndCreateUser()
+  }
+  
   const posts = await prisma.post.findMany({
     select: {
       id: true,

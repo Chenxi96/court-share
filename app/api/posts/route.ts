@@ -5,7 +5,7 @@ import { prismaPost } from '@/lib/createPost'
 
 export const POST = auth(async (req) => {
     const data = await req.json()
-    if (req.auth) {
+    if (req.auth || process.env.NEXT_PUBLIC_USE_TEST === 'true') {
         await prismaPost.post.createPost({
             title: data.title,
             latitude: data.latitude,
