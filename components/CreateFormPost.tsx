@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import AutoComplete from "react-google-autocomplete"
 import { FormEvent } from "react";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/useSession";
 import { Session } from "next-auth";
 
 interface postData {
@@ -106,9 +106,9 @@ const CreateFormPost: React.FC<props> = (props) => {
                     }}
                 />
                 <label htmlFor="">Description</label>
-                <input type="text" name="description" id="" onChange={handleInput} />
+                <input type="text" name="description" id="description" onChange={handleInput} />
                 <label htmlFor="">Available Spots</label>
-                <input type="number" name="availableSpots" id="" onChange={handleInput}/>
+                <input type="number" name="availableSpots" id="availableSpots" onChange={handleInput}/>
                 <label htmlFor="">Event Time</label>
                 <input type="datetime-local" name="eventTime" onChange={handleInput} />
                 <input type="submit" />
@@ -120,7 +120,7 @@ const CreateFormPost: React.FC<props> = (props) => {
         )
     } else {
         return (
-            <p>Post created</p>
+            <p className="PostCreated">Post created</p>
         )
     }
 }
