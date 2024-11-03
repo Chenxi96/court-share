@@ -146,7 +146,7 @@ const Header: React.FC = () => {
         <p data-testid='user'>
           {session?.user?.name} ({session?.user?.email})
         </p>
-        <Link href="/create" >
+        <Link className='createPost' href="/create" >
           New post
         </Link>
         <button onClick={() => signOut()}>
