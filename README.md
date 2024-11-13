@@ -7,12 +7,6 @@
 2. Install dependencies with `npm install`.
 3. Install docker `https://docs.docker.com/get-docker/`
 
-## Running App locally with auth
-1. Install NGROK `brew install ngrok/ngrok/ngrok`
-2. Connect to NGROK account `ngrok config add-authtoken <TOKEN>`
-3. Run your App local `npm run dev`
-4. Put app online with Oauth authentication `ngrok http http://localhost:3000 --oauth=google`
-
 ## Running App locally
 1. Create a `.env`, add `POSTGRES_PRISMA_URL` with an string value of `postgresql://postgres:password@localhost:5432/court-share?schema=public`
 2. Prompt `npx prisma migrate dev` to update the prisma schema with the new url.
