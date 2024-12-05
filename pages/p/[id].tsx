@@ -6,6 +6,7 @@ import { PostProps } from "@/components/Post"
 import Error from 'next/error'
 import { auth } from '@/lib/authSession'
 import { Session } from 'next-auth'
+import { Heading, Text } from "@chakra-ui/react";
 
 interface PropObj {
   post: PostProps
@@ -28,6 +29,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         id: true,
         title: true,
         ownerId: true,
+        description: true,
         owner: {
           select: {
             id: true,
@@ -56,6 +58,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const Post: React.FC<PropObj> = (props) => {
     let title = props?.post?.title
     let name = props?.post?.owner?.name
+    let description = props?.post?.description
+    
     if(props?.code) {
       return <Error statusCode={404} title="Post does not exist"/>
     } else if(!props?.session?.user) {
@@ -68,8 +72,9 @@ const Post: React.FC<PropObj> = (props) => {
       return (
         <Layout>
           <div>
-        <h2 data-testid="heading-title">{title}</h2>
-        <p data-testid="post-name">{name}</p>
+        <Heading data-testid="heading-title">{title}</Heading>
+        <Text data-testid="post-description">{description}</Text>
+        <Text data-testid="post-name">{name}</Text>
         <style jsx>{`
       .page {
         background: white;

@@ -5,6 +5,7 @@ import Layout from "@/components/Layout"
 import Post, { PostProps } from "@/components/Post"
 import { auth } from '@/lib/authSession'
 import { Session } from "next-auth"
+import { Heading } from "@chakra-ui/react"
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await auth(context)
@@ -14,6 +15,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       id: true,
       title: true,
       ownerId: true,
+      description: true,
       owner: {
         select: {
           id: true,
@@ -35,12 +37,16 @@ type Props = {
 
 const PostPage: React.FC<Props> = (props) => {
   if(!props?.session) {
-    return <p>Please log in</p>
+    return (
+      <Layout>
+        <p>Please log in</p>
+      </Layout>
+    )
   } else { 
     return (
       <Layout>
         <div className="page">
-          <h1>Public Posts</h1>
+          <Heading as='h1' size='4xl'>Public Posts</Heading>
           <main>
             {props.posts.map((post) => (
               <div key={post.id} className="post">

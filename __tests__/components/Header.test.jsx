@@ -22,7 +22,7 @@ describe('Testing login authentication', () => {
         })
         render(<Page />)
         const text = screen.getByTestId('user')
-        const signOut = screen.getByText('Log out')
+        const signOut = screen.getByTestId('logOutButton')
         expect(text).toHaveTextContent('admin (example@example.com)')
         expect(signOut).toBeInTheDocument();
     })
@@ -57,7 +57,7 @@ describe('Testing Local development', () => {
         })
         render(<Page />)
         const text = screen.getByTestId('user')
-        const signOut = screen.getByText('Log out')
+        const signOut = screen.getByTestId('logOutButton')
         expect(text).toHaveTextContent('admin (example@example.com)')
         expect(signOut).toBeInTheDocument();  
     })
@@ -66,7 +66,7 @@ describe('Testing Local development', () => {
         process.env.NEXT_PUBLIC_USE_TEST = 'true'
         render(<Page />)
         const text = screen.getByTestId('user')
-        const signOut = screen.getByText('Log out')
+        const signOut = screen.getByTestId('logOutButton')
         expect(text).toHaveTextContent('admin (testing@example.com)')
         expect(signOut).toBeInTheDocument(); 
     })

@@ -1,9 +1,9 @@
 import React from 'react';
-import Link from 'next/link';
+import { Link } from '@chakra-ui/react'
 import { useRouter } from 'next/router';
-import { signOut } from 'next-auth/react';
+import { signOut, signIn } from 'next-auth/react';
 import { useSession } from '@/lib/useSession';
-
+import { Button } from '@chakra-ui/react';
 
 const Header: React.FC = () => {
   const router = useRouter();
@@ -83,9 +83,9 @@ const Header: React.FC = () => {
   if (!session) {
     right = (
       <div className="right">
-        <Link href="/api/auth/signin" data-active={isActive('/signup')}>
+        <Button onClick={() => signIn()}>
           Log in
-        </Link>
+        </Button>
         <style jsx>{`
           a {
             text-decoration: none;
@@ -114,7 +114,7 @@ const Header: React.FC = () => {
   if (session) {
     left = (
       <div className="left">
-        <Link href="/" className="bold" data-active={isActive('/')}>
+        <Link mr="20px" href="/" className="bold" data-active={isActive('/')}>
           Feed
         </Link>
         <Link href="/drafts" data-active={isActive('/drafts')}>
@@ -149,9 +149,9 @@ const Header: React.FC = () => {
         <Link className='createPost' href="/create" >
           New post
         </Link>
-        <button onClick={() => signOut()}>
-          <a>Log out</a>
-        </button>
+        <Button data-testid="logOutButton" ml="20px" onClick={() => signOut()}>
+          Log Out
+        </Button>
         <style jsx>{`
           a {
             text-decoration: none;

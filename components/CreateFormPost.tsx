@@ -3,6 +3,19 @@ import AutoComplete from "react-google-autocomplete"
 import { FormEvent } from "react";
 import { useSession } from "@/lib/useSession";
 import { Session } from "next-auth";
+import {
+    NumberInput,
+    NumberInputField,
+    NumberInputStepper,
+    NumberIncrementStepper,
+    NumberDecrementStepper,
+    Button,
+    Box,
+    Input,
+    FormControl,
+    FormLabel,
+  } from '@chakra-ui/react'
+  
 
 interface postData {
     title: string,
@@ -47,7 +60,7 @@ const CreateFormPost: React.FC<props> = (props) => {
     async function onSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault()
         setIsSubmitted(true)
-        const response = await fetch('/api/posts', {
+        await fetch('/api/posts', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -83,36 +96,45 @@ const CreateFormPost: React.FC<props> = (props) => {
 
     if(!isSubmitted && session) {
         return (
-            <form onSubmit={onSubmit}>
-                <label htmlFor="title">Title</label>
-                <input type="text" name="title" id="title" onChange={handleInput}/>
-                <label htmlFor="location">Location</label>
-                <AutoComplete
-                    id="location"
-                    apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
-                    onPlaceSelected={(place) => {
-                        const latitude = place.geometry.location.lat()
-                        const longitude = place.geometry.location.lng()
-                        setPostData((prevState) => ({
-                            ...prevState,
-                            latitude : latitude,
-                            longitude : longitude
-                        }))
-                      }}
-                    options={{
-                        types: ["geocode"],
-                        ComponentRestrictions: { country: "ca"},
-                        fields: ["formatted_address", "geometry"]
-                    }}
-                />
-                <label htmlFor="">Description</label>
-                <input type="text" name="description" id="description" onChange={handleInput} />
-                <label htmlFor="">Available Spots</label>
-                <input type="number" name="availableSpots" id="availableSpots" onChange={handleInput}/>
-                <label htmlFor="">Event Time</label>
-                <input type="datetime-local" name="eventTime" onChange={handleInput} />
-                <input type="submit" />
-            </form>
+            <Box as='form' w='50%' margin='auto' onSubmit={onSubmit}>
+                <FormControl>
+                    <FormLabel htmlFor="title">Title</FormLabel>
+                        <Input type="text" name="title" id="title" onChange={handleInput}/>
+                        <FormLabel htmlFor="location">Location</FormLabel>
+                        <AutoComplete
+                            id="location"
+                            className="css-1cjy4zv"
+                            apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
+                            onPlaceSelected={(place) => {
+                                const latitude = place.geometry.location.lat()
+                                const longitude = place.geometry.location.lng()
+                                setPostData((prevState) => ({
+                                    ...prevState,
+                                    latitude : latitude,
+                                    longitude : longitude
+                                }))
+                            }}
+                            options={{
+                                types: ["geocode"],
+                                ComponentRestrictions: { country: "ca"},
+                                fields: ["formatted_address", "geometry"]
+                            }}
+                        />
+                        <FormLabel htmlFor="description">Description</FormLabel>
+                        <Input name="description" id="description" onChange={handleInput} />
+                        <FormLabel htmlFor="availableSpots">Available Spots</FormLabel>
+                        <NumberInput defaultValue={0} min={0} name="availableSpots" id="availableSpots" >
+                            <NumberInputField  />
+                            <NumberInputStepper onChange={handleInput}>
+                                <NumberIncrementStepper />
+                                <NumberDecrementStepper />
+                            </NumberInputStepper>
+                        </NumberInput>
+                        <FormLabel htmlFor="availableSpots">Event Time</FormLabel>
+                        <Input type="datetime-local" name="eventTime" onChange={handleInput} />
+                        <Button mt='20px' colorScheme="teal" type="submit">Submit</Button>
+                </FormControl>
+            </Box>
         )
     } else if(!isSubmitted && !session) {
         return(
